@@ -1,27 +1,25 @@
 import {
   Button,
-  FormControl,
-  FormErrorMessage,
   Heading,
-  Image,
-  Input,
-  InputGroup,
-  InputRightElement,
-  Text,
+  Image
 } from "@chakra-ui/react";
-import * as S from "./styles";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { z } from "zod";
+import { FormInput } from "../../components/Form/Input";
+import * as S from "./styles";
 import logo from "/logoBarberShop.png";
+import { useState } from "react";
+import { api } from "../../service/api";
+import { useAuthProvider } from "../../context/Auth/useAuthContext";
 
 export const Login = () => {
-  const [show, setShow] = useState(false);
+  const {signIn} = useAuthProvider()
+  const [loading, setLoading] = useState(false)
 
   const schema = z.object({
-    email: z.string().min(1, "Campo obrigatório."),
-    password: z.string().min(1, "Campo obrigatório."),
+    email: z.string().min(1, "Campo obrigatório.").email("Necessario ser um email"),
+    password: z.string().min(6, "Campo obrigatório."),
   });
 
   type TFormData = z.infer<typeof schema>;
@@ -38,11 +36,19 @@ export const Login = () => {
     },
   });
 
-  const handleLogin = (data: TFormData) => {
-    console.log(data);
+  const handleLogin = async(data: TFormData) => {
+    setLoading(true)
+    await api.post('/auth/login',{
+      ...data
+    }).then((res) => {
+      console.log(res.data.accessToken);
+      
+      signIn(res.data.accessToken)
+
+    }).finally(() => setLoading(false))
   };
 
-  console.log(errors);
+  // console.log(errors);
 
   return (
     <S.LoginContainer>
@@ -54,40 +60,11 @@ export const Login = () => {
           Login
         </Heading>
         <S.FormContainer onSubmit={handleSubmit(handleLogin)}>
-          <FormControl isInvalid={!!errors.email}>
-            <Text mb="10px">Email:</Text>
-            <Input
-              width="100%"
-              placeholder="Ex: ola@ola.com"
-              {...register("email")}
-            />
-            <FormErrorMessage>
-              {errors.email && errors.email.message}
-            </FormErrorMessage>
-          </FormControl>
-          <FormControl isInvalid={!!errors.password}>
-            <Text mb="10px">Password</Text>
-            <InputGroup>
-              <Input
-                width="auto"
-                placeholder="Ex: ola@ola.com"
-                type={show ? "text" : "password"}
-                pr="4.8rem"
-                {...register("password")}
-              />
-              <InputRightElement width="4.5rem" paddingRight="10px">
-                <Button
-                  h="1.75rem"
-                  size="sm"
-                  onClick={() => setShow((prev) => !prev)}
-                >
-                  {show ? "Ocultar" : "Mostrar"}
-                </Button>
-              </InputRightElement>
-            </InputGroup>
-            <FormErrorMessage>{errors.password?.message}</FormErrorMessage>
-          </FormControl>
-          <Button type="submit" width="100%">
+          <FormInput {...register('email')} error={errors.email?.message} placeholder="Ex: luiz@luiz.com" />
+
+          <FormInput {...register('password')} type="password" error={errors.password?.message} placeholder="minimo 6 caracteres" />
+
+          <Button type="submit" width="100%" isLoading={loading}>
             Entrar
           </Button>
         </S.FormContainer>
