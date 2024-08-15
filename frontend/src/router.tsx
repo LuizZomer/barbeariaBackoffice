@@ -7,18 +7,19 @@ import { UserList } from "./screens/Users";
 export const AppRouter = () => (
   <BrowserRouter>
     <Routes>
-      <Route path="/" element={<Login />} />
+      <Route path="/login" element={<Login />} />
 
-      <Route path="/" element={
-        <RequireAuth>
-          <Sidebar />
-        </RequireAuth>
-      }>
-
+      <Route
+        path="/"
+        element={
+          <RequireAuth>
+            <Sidebar />
+          </RequireAuth>
+        }
+      >
         <Route path="user">
           <Route index element={<UserList />} />
         </Route>
-
       </Route>
     </Routes>
   </BrowserRouter>

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 
-export const LoginContainer = styled.div`
+export const Container = styled.div`
   height: 100vh;
   width: 100%;
   display: flex;
@@ -12,10 +12,17 @@ export const LoginContainer = styled.div`
 `;
 
 export const LogoContainer = styled.div`
-  box-shadow: 0 0 10px rgba(0, 0, 0, 01); /* Borrão ao redor da borda */
+padding: 20px;
 `;
 
 export const ContentContainer = styled.div`
+  padding: 10px;
+  max-width: 450px; 
+  min-width: 280px;
+  width: 100%;
+`
+
+export const LoginContainer = styled.div`
   background-color: white;
   padding: 20px;
   border-radius: 10px;

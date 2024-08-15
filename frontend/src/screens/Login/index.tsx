@@ -48,11 +48,12 @@ export const Login = () => {
   };
 
   return (
-    <S.LoginContainer>
+    <S.Container>
       <S.LogoContainer>
         <Image src={logo} alt="logo" />
       </S.LogoContainer>
       <S.ContentContainer>
+      <S.LoginContainer>
         <Heading as="h1" size="xl">
           Login
         </Heading>
@@ -65,7 +66,8 @@ export const Login = () => {
             Entrar
           </Button>
         </S.FormContainer>
+      </S.LoginContainer>
       </S.ContentContainer>
-    </S.LoginContainer>
+    </S.Container>
   );
 };
