@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Headers, Post, UnauthorizedException } from '@nestjs/common';
 import { AuthLoginDTO } from './dto/auth-login.dto';
 import { AuthService } from './auth.service';
 
@@ -11,8 +11,11 @@ export class AuthController {
         return this.authService.login(login)
     }
 
-    @Post('check')
-    async check(){
-
+    @Get('check')
+    async check(@Headers('authorization') token: string){
+        if (!token) throw new UnauthorizedException("Sem permisão")
+            
+        const formatedToken = token.split(' ')[1]
+        return this.authService.isValidToken(formatedToken)
     }
 }
