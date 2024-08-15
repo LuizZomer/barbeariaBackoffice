@@ -1,4 +1,4 @@
-import { Toast } from "@chakra-ui/react"
+import { toast } from "react-toastify"
 
 interface IThenHandler {
     data: {
@@ -16,35 +16,25 @@ interface ICatchHandler {
 }
 
 
-export const thenHandler = (res: IThenHandler) => {
-    if(res.data) Toast({
-        status: "success",
-        title: res.data.message
-    })
-
-    Toast({
-        status: 'success',
-        title: "Sucesso"
-    })
-}
-
 export const catchHandler = (err: ICatchHandler) => {
+    toast.dismiss();
     if (err.response?.data) {
-      if (err.response.data.message) Toast({
-        status: 'error',
-        title: err.response.data.message
-    })
-;
-      else Toast({
-        status: 'error',
-        title: err.response.status
-    })
+      if (err.response.data.message) toast.error(err.response.data.message);
+      else toast.error(`Erro: ${err.response.status}`);
   
       if (err.response.status === 401 && window.location.pathname !== "/login")
         window.location.pathname = "/login";
     } else {
-      Toast({title: "Erro de comunicação", status: 'error'});
+      toast.error("Erro de comunicação");
     }
   };
   
-  
+  export const thenHandler = (res: IThenHandler) => {
+    toast.dismiss();
+    if (res.data) {
+      toast.success(res.data.message);
+    } else {
+      toast.success("Sucesso");
+    }
+  };
+    

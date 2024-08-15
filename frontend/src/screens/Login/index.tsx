@@ -10,11 +10,13 @@ import { FormInput } from "../../components/Form/Input";
 import * as S from "./styles";
 import logo from "/logoBarberShop.png";
 import { useState } from "react";
-import { api } from "../../service/api";
-import { useAuthProvider } from "../../context/Auth/useAuthContext";
+import { api } from "../../services/api";
+import { useAuthProvider } from "../../contexts/Auth/useAuthContext";
+import { useNavigate } from "react-router-dom";
 
 export const Login = () => {
   const {signIn} = useAuthProvider()
+  const navigate = useNavigate()
   const [loading, setLoading] = useState(false)
 
   const schema = z.object({
@@ -38,17 +40,12 @@ export const Login = () => {
 
   const handleLogin = async(data: TFormData) => {
     setLoading(true)
-    await api.post('/auth/login',{
-      ...data
-    }).then((res) => {
-      console.log(res.data.accessToken);
-      
+    await api.post('/auth/login', data).then((res) => {      
       signIn(res.data.accessToken)
 
+      navigate('/user')
     }).finally(() => setLoading(false))
   };
-
-  // console.log(errors);
 
   return (
     <S.LoginContainer>
