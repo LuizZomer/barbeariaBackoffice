@@ -4,6 +4,6 @@ export interface IUser {
   email: string;
   workload: string;
   role: string;
-  wage: string;
+  wage: number;
   createdAt: string;
 }

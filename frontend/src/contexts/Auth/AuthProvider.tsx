@@ -1,26 +1,26 @@
-import { useState } from "react"
-import { jwtDecode, JwtPayload } from "jwt-decode"
-import { AuthContext } from "./AuthContext"
+import { useState } from "react";
+import { jwtDecode, JwtPayload } from "jwt-decode";
+import { AuthContext } from "./AuthContext";
 
-export const AuthProvider = ({children}:{children: React.ReactNode}) => {
-    const [user, setUser] = useState<JwtPayload | null>(null)
+export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
+  const [user, setUser] = useState<JwtPayload | null>(null);
 
-    const signOut = () => {
-        setUser(null)
-        localStorage.removeItem('authToken')
-    }
+  const signOut = () => {
+    setUser(null);
+    localStorage.removeItem("authToken");
+  };
 
-    const signIn = async (token: string) => {
-        const decoded = jwtDecode(token)
-        localStorage.setItem('authToken', token)
-        console.log(decoded);
-        
-        setUser(decoded)
-    }
+  const signIn = async (token: string | null) => {
+    if (!token) return;
+    const decoded = jwtDecode(token);
+    localStorage.setItem("authToken", token);
 
-    return (
-        <AuthContext.Provider value={{user, signIn, signOut}}>
-            {children}
-        </AuthContext.Provider>
-    )
-} 
+    setUser(decoded);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, signIn, signOut }}>
+      {children}
+    </AuthContext.Provider>
+  );
+};

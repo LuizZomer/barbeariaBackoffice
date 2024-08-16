@@ -48,5 +48,6 @@ export const OneOptionContainer = styled.div<{ $isActive: boolean }>`
 `;
 
 export const Content = styled.div`
-  margin: 10px 0 0 110px;
+  margin: 0 10px 0 110px;
+  width: 100%;
 `;

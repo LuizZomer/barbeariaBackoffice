@@ -37,4 +37,10 @@ export const catchHandler = (err: ICatchHandler) => {
       toast.success("Sucesso");
     }
   };
-    
+
+export const intlNumberFormatter = (number: number) => {
+  return new Intl.NumberFormat('pt-br',{
+    style: 'currency',
+    currency: 'BRL'
+  }).format(number)
+}

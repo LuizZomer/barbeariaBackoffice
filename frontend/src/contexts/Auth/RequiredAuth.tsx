@@ -1,4 +1,3 @@
-
 import React, { useContext, useEffect, useState } from "react";
 import styled from "styled-components";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +9,6 @@ import { AuthContext } from "./AuthContext";
 // COMPONENTS
 
 // TYPES
-import { AxiosResponse } from "axios";
 import { Spinner } from "@chakra-ui/react";
 
 const Container = styled.div`
@@ -21,7 +19,7 @@ const Container = styled.div`
   min-height: 100vh;
 `;
 
-export const RequireAuth = ({ children }: {children: React.ReactNode}) => {
+export const RequireAuth = ({ children }: { children: React.ReactNode }) => {
   const { signIn, signOut } = useContext(AuthContext);
   const [loading, setLoading] = useState<boolean>(false);
   const navigate = useNavigate();
@@ -29,9 +27,9 @@ export const RequireAuth = ({ children }: {children: React.ReactNode}) => {
   const validateToken = async () => {
     await api
       .get("/auth/check")
-      .then((res: AxiosResponse) => {
-        console.log(res.data.accessToken);
-        signIn(res.data.accessToken)
+      .then(() => {
+        const token = localStorage.getItem("authToken");
+        signIn(token);
         setLoading(false);
       })
       .catch(() => {
