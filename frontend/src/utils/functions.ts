@@ -54,3 +54,17 @@ export const valueMask = (value: string) => {
     currency: "BRL",
   });
 }
+
+export const unmaskValue = (value: string): number => {
+  // Remove o símbolo da moeda, espaços, e substitui a vírgula por ponto
+  const rawValue = value
+    .replace(/[^\d,]/g, '')  // Remove tudo que não for dígito ou vírgula
+    .replace(/\.(?=.*\.)/, '') // Remove o primeiro ponto encontrado
+    .replace(',', '.'); // Substitui a vírgula decimal por ponto
+
+  return parseFloat(rawValue) || 0;
+};
+
+export const DateFormater = (date: string) => 
+  new Date(date).toLocaleDateString()
+  

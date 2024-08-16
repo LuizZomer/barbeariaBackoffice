@@ -1,9 +1,3 @@
-import { UserService } from "../../services/user";
-import { AxiosClient } from "../../ServiceClients/AxiosClient";
-import { useQuery } from "@tanstack/react-query";
-import { Title } from "../../components/Text/Title";
-import { InfoTable, InfoTableContent } from "../../components/Table";
-import { intlNumberFormatter } from "../../utils/functions";
 import {
   Box,
   Button,
@@ -12,17 +6,32 @@ import {
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
-import { PopoverDelete } from "../../components/Popover";
 import { Pencil, PlusCircle } from "@phosphor-icons/react";
-import { PermissionService } from "../../services/permission";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
+import { toast } from "react-toastify";
 import { IconButton } from "../../components/IconButton";
+import { PopoverDelete } from "../../components/Popover";
+import { InfoTable, InfoTableContent } from "../../components/Table";
+import { Title } from "../../components/Text/Title";
+import { AxiosClient } from "../../ServiceClients/AxiosClient";
+import { PermissionService } from "../../services/permission";
+import { UserService } from "../../services/user";
+import { DateFormater, intlNumberFormatter } from "../../utils/functions";
 import { ModalCreateUser } from "./utils/ModalCreateUser";
+import { IUser } from "../../utils/types";
+import { ModalUpdateUser } from "./utils/ModalUpdateUser";
 
 export const UserList = () => {
   const userService = new UserService(AxiosClient);
   const permissionService = new PermissionService(AxiosClient);
   const { isOpen, onClose, onOpen } = useDisclosure();
+  const {
+    isOpen: updateIsOpen,
+    onClose: updateClose,
+    onOpen: updateOnOpen,
+  } = useDisclosure();
+  const [selectedUser, setSelectedUser] = useState<IUser>();
 
   const [selectedPermission, setSelectedPermission] = useState("");
 
@@ -40,8 +49,24 @@ export const UserList = () => {
     queryFn: () => permissionService.getPermissionSelect(),
   });
 
+  const mutation = useMutation({
+    mutationFn: (id: string) => userService.delete(id),
+    onSuccess: () => {
+      toast.success("Apagado com sucesso!");
+      refetch();
+    },
+  });
+
   return (
     <>
+      {updateIsOpen && selectedUser && (
+        <ModalUpdateUser
+          isOpen={updateIsOpen}
+          onClose={updateClose}
+          onSave={refetch}
+          user={selectedUser}
+        />
+      )}
       {<ModalCreateUser isOpen={isOpen} onClose={onClose} onSave={refetch} />}
       <Flex justify="space-between">
         <Title label="Usuários" />
@@ -82,23 +107,35 @@ export const UserList = () => {
                 { label: "Salario" },
                 { label: "Permissão" },
                 { label: "Carga Horária" },
+                { label: "Criação" },
                 { label: "Ações" },
               ]}
             >
-              {userList.map(({ id, name, email, role, wage, workload }) => (
+              {userList.map((user) => (
                 <InfoTableContent
-                  key={id}
+                  key={user.id}
                   colsBody={[
-                    { ceil: name },
-                    { ceil: email },
-                    { ceil: intlNumberFormatter(wage) },
-                    { ceil: role },
-                    { ceil: workload },
+                    { ceil: user.name },
+                    { ceil: user.email },
+                    { ceil: intlNumberFormatter(user.wage) },
+                    { ceil: user.role },
+                    { ceil: user.workload },
+                    { ceil: DateFormater(user.createdAt) },
                     {
                       ceil: (
                         <Flex>
-                          <PopoverDelete section="Usuário" onClick={() => ""} />
-                          <Button variant="none">
+                          <PopoverDelete
+                            section="Usuário"
+                            onClick={() => mutation.mutate(user.id)}
+                          />
+                          <Button
+                            variant="none"
+                            onClick={() => {
+                              console.log(user);
+                              setSelectedUser(user);
+                              updateOnOpen();
+                            }}
+                          >
                             <Pencil size={22} />
                           </Button>
                         </Flex>

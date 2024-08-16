@@ -28,9 +28,9 @@ export const PopoverDelete = ({ onClick, section }: IDeletePopover) => (
         <PopoverArrow />
         <PopoverHeader>Excluir</PopoverHeader>
         <PopoverCloseButton />
-        <PopoverBody>{`Você realmente apagar este ${section}`}</PopoverBody>
+        <PopoverBody>{`Você realmente apagar este ${section}?`}</PopoverBody>
         <PopoverBody>
-          <Button colorScheme="blue" onClick={() => onClick()}>
+          <Button colorScheme="red" onClick={() => onClick()}>
             Excluir
           </Button>
         </PopoverBody>

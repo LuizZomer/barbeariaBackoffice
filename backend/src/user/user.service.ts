@@ -8,21 +8,35 @@ import * as bcript from 'bcrypt';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(user: CreateUserDto) {
+  async create({email, name, password, role, wage, workload}: CreateUserDto) {
     const incryptedPassword = bcript.hashSync(
-      user.password,
+      password,
       await bcript.genSalt(),
     );
 
     return this.prisma.user.create({
       data: {
-        ...user,
+        email,
+        name,
+        role,
+        wage, 
+        workload,
         password: incryptedPassword,
       },
+      select:{
+        wage: true,
+        email: true,
+        id: true,
+        name: true,
+        role: true,
+        workload: true,
+        createdAt: true,
+        password: false,
+      }
     });
   }
 
-  async findAll() {
+  async findAll(role?: string) {    
     return this.prisma.user.findMany({
       select: {
         wage: true,
@@ -33,8 +47,10 @@ export class UserService {
         workload: true,
         createdAt: true,
         password: false,
-      },
-    });
+      },where:{
+        role: role || undefined
+      }
+    });    
   }
 
   async findOne(id: string) {
@@ -74,6 +90,16 @@ export class UserService {
       where: {
         id,
       },
+      select:{
+        wage: true,
+        email: true,
+        id: true,
+        name: true,
+        role: true,
+        workload: true,
+        createdAt: true,
+        password: false,
+      }
     });
   }
 

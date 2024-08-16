@@ -20,4 +20,22 @@ export const AxiosClient: IHttpClient = {
       status: res.status,
     };
   },
+
+  async delete<T>(url: string){
+    const res: AxiosResponse<T> = await api.delete(url);
+
+    return {
+      data: res.data,
+      status: res.status
+    }
+  },
+
+  async update<T, K>(url: string, body: K): Promise<IHttpResponse<T>>{
+      const res: AxiosResponse<T> = await api.put(url, body);
+      
+      return {
+        data: res.data,
+        status: res.status
+      }
+  }
 };

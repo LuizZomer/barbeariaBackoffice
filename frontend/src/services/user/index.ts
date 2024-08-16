@@ -1,4 +1,4 @@
-import { IUser } from "../../utils/types";
+import { IUser, IUserPost, TUserPost } from "../../utils/types";
 import { IHttpClient } from "../types";
 
 export class UserService {
@@ -17,4 +17,31 @@ export class UserService {
       return [];
     }
   }
+
+  async post(user: IUserPost): Promise<TUserPost | void>{
+      try{
+        const res = await this.httpClient.post<TUserPost>('/users', user)
+        return res.data
+      }catch(err){
+        console.log(err);
+      }
+  }
+
+  async delete(id: string): Promise<TUserPost>{
+    try{      
+      const res = await this.httpClient.delete<IUserPost>(`/users/${id}`)
+      return res.data
+    }catch(err){
+      console.log(err);
+    }
+  }
+
+  async update(user: IUserPost): Promise<TUserPost | void>{
+    try{
+      const res = await this.httpClient.update<TUserPost>('/users', user)
+      return res.data
+    }catch(err){
+      console.log(err);
+    }
+}
 }

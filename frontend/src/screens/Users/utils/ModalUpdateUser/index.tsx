@@ -18,16 +18,22 @@ import { AxiosClient } from "../../../../ServiceClients/AxiosClient";
 import { PermissionService } from "../../../../services/permission";
 import { unmaskValue, valueMask } from "../../../../utils/functions";
 import { UserService } from "../../../../services/user";
-import { TUserPost } from "../../../../utils/types";
+import { IUser, TUserPost } from "../../../../utils/types";
 import { toast } from "react-toastify";
 
 interface IModalProps {
   onClose: () => void;
   isOpen: boolean;
   onSave: () => void;
+  user: IUser;
 }
 
-export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
+export const ModalUpdateUser = ({
+  isOpen,
+  onClose,
+  onSave,
+  user,
+}: IModalProps) => {
   const permissionService = new PermissionService(AxiosClient);
   const userService = new UserService(AxiosClient);
 
@@ -37,7 +43,7 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
   });
 
   const mutation = useMutation({
-    mutationFn: userService.post.bind(userService),
+    mutationFn: userService.update.bind(userService),
     onSuccess: () => {
       toast.success("Criado com sucesso!");
       onSave();
@@ -45,27 +51,13 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
     },
   });
 
-  const schema = z
-    .object({
-      name: z.string().min(3, "No minimo 3 caracteres"),
-      password: z
-        .string()
-        .min(6, "No minimo 6 caracteres")
-        .regex(/\d/, "A senha deve conter pelo menos um número")
-        .regex(/[a-z]/, "A senha deve conter pelo menos uma letra minúscula"),
-      confirmPassword: z.string(),
-      email: z
-        .string()
-        .email("Precisa ser um email")
-        .min(1, "Campo obrigatório"),
-      workload: z.string().min(1, "Campo obrigatório"),
-      wage: z.string().min(1, "Campo obrigatório"),
-      role: z.string().min(1, "Campo obrigatório"),
-    })
-    .refine((data) => data.password === data.confirmPassword, {
-      message: "As senhas devem ser iguais",
-      path: ["confirmPassword"],
-    });
+  const schema = z.object({
+    name: z.string().min(3, "No minimo 3 caracteres"),
+    email: z.string().email("Precisa ser um email").min(1, "Campo obrigatório"),
+    workload: z.string().min(1, "Campo obrigatório"),
+    wage: z.string().min(1, "Campo obrigatório"),
+    role: z.string().min(1, "Campo obrigatório"),
+  });
 
   type TFormData = z.infer<typeof schema>;
 
@@ -78,12 +70,11 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
   } = useForm<TFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      email: "",
-      name: "",
-      password: "",
-      role: "",
-      wage: "",
-      workload: "",
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      wage: valueMask(String(user.wage)),
+      workload: user.workload,
     },
   });
 
@@ -92,13 +83,11 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
     onClose();
   };
 
-  const handleCreate = (data: TFormData) => {
+  const handleUpdate = (data: TFormData) => {
     const user: TUserPost = {
       ...data,
       wage: unmaskValue(data.wage),
     };
-
-    console.log(user);
 
     mutation.mutate(user);
   };
@@ -107,10 +96,10 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
     <Modal isOpen={isOpen} onClose={handleClose}>
       <ModalOverlay />
       <ModalContent>
-        <ModalHeader>Cadastrar Usuário</ModalHeader>
+        <ModalHeader>Editar Usuário</ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <form onSubmit={handleSubmit(handleCreate)}>
+          <form onSubmit={handleSubmit(handleUpdate)}>
             <Flex direction="column" gap="10px">
               <FormInput
                 label="Nome"
@@ -170,24 +159,8 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
                 )}
               />
 
-              <FormInput
-                label="Senha"
-                {...register("password")}
-                error={errors.password?.message}
-                placeholder="No minimo 6 digitos"
-                type="password"
-              />
-
-              <FormInput
-                label="Confirme a senha"
-                {...register("confirmPassword")}
-                error={errors.confirmPassword?.message}
-                placeholder="Confirme sua senha"
-                type="password"
-              />
-
               <Button type="submit" mb={5}>
-                Cadastrar
+                Editar
               </Button>
             </Flex>
           </form>

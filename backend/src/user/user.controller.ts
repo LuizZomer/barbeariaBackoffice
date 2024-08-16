@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserService } from './user.service';
@@ -19,8 +19,8 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  findAll(@Query('role') role: string) {
+    return this.userService.findAll(role);
   }
 
   @Get(':id')
@@ -35,6 +35,8 @@ export class UserController {
 
   @Delete(':id')
   remove(@Param('id') id: string) {
+    console.log('a');
+    
     return this.userService.remove(id);
   }
 }
