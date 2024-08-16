@@ -8,9 +8,9 @@ export class UserService {
     this.httpClient = HttpClient;
   }
 
-  async getUserList(): Promise<IUser[]> {
+  async getUserList({role}: {role: string}): Promise<IUser[]> {
     try {
-      const res = await this.httpClient.get<IUser[]>("/users");
+      const res = await this.httpClient.get<IUser[]>(`/users?role=${role}`);
       return res.data;
     } catch (err) {
       console.log(err);

@@ -44,3 +44,13 @@ export const intlNumberFormatter = (number: number) => {
     currency: 'BRL'
   }).format(number)
 }
+
+export const valueMask = (value: string) => {
+  const rawValue = value.replace(/\D/g, ""); 
+
+  return (Number(rawValue) / 100)
+  .toLocaleString("pt-br", {
+    style: "currency",
+    currency: "BRL",
+  });
+}

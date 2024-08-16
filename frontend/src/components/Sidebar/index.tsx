@@ -15,8 +15,8 @@ export const Sidebar = () => {
   const navigate = useNavigate();
 
   const sidebarOptions: ISidebarOption[] = [
-    { icon: <House size={32} color="white" />, title: "Home", url: "/home" },
-    { icon: <User size={32} color="white" />, title: "Usuarios", url: "/user" },
+    { icon: <House size={28} color="white" />, title: "Home", url: "/home" },
+    { icon: <User size={28} color="white" />, title: "Usuários", url: "/user" },
   ];
 
   return (
@@ -34,7 +34,7 @@ export const Sidebar = () => {
               $isActive={window.location.pathname === url}
             >
               {icon}
-              <Text color="white" fontSize={12}>
+              <Text color="white" fontSize={10}>
                 {title}
               </Text>
             </S.OneOptionContainer>

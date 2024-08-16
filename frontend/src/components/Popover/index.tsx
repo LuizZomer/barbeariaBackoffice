@@ -19,7 +19,9 @@ interface IDeletePopover {
 export const PopoverDelete = ({ onClick, section }: IDeletePopover) => (
   <Popover>
     <PopoverTrigger>
-      <Trash color="red" size={22} />
+      <Button variant="none">
+        <Trash color="red" size={22} />
+      </Button>
     </PopoverTrigger>
     <Portal>
       <PopoverContent>

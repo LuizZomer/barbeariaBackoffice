@@ -7,3 +7,8 @@ export interface IUser {
   wage: number;
   createdAt: string;
 }
+
+export interface ISelect {
+  label: string;
+  value: string;
+}
