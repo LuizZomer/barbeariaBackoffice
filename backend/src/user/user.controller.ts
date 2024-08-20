@@ -6,6 +6,9 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RoleGuard } from 'src/guards/role.guard';
 import { Role } from 'src/enums/role.enum';
 import { Roles } from 'src/decorators/roles.decorator';
+import { UserToken } from 'src/decorators/token-user.decorator';
+import { Jwt } from 'jsonwebtoken';
+import { ITokenUser } from 'src/utils/types';
 
 @Roles(Role.Admin)
 @UseGuards(AuthGuard, RoleGuard)
@@ -34,9 +37,7 @@ export class UserController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    console.log('a');
-    
+  remove(@Param('id') id: string) {    
     return this.userService.remove(id);
   }
 }

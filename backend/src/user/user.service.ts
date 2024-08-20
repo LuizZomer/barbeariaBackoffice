@@ -1,8 +1,10 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException, UnauthorizedException, Delete } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import * as bcript from 'bcrypt';
+import { Role } from 'src/enums/role.enum';
+import { messageGenerator } from 'src/utils/functions';
 
 @Injectable()
 export class UserService {
@@ -14,7 +16,7 @@ export class UserService {
       await bcript.genSalt(),
     );
 
-    return this.prisma.user.create({
+    await this.prisma.user.create({
       data: {
         email,
         name,
@@ -34,6 +36,8 @@ export class UserService {
         password: false,
       }
     });
+
+    return messageGenerator('create')
   }
 
   async findAll(role?: string) {    
@@ -66,10 +70,10 @@ export class UserService {
   async update(
     id: string,
     { email, name, role, wage, workload }: UpdateUserDto,
-  ) {
+  ) {    
     await this.exist(id);
 
-    return this.prisma.user.update({
+    await this.prisma.user.update({
       data: {
         email,
         name,
@@ -81,12 +85,28 @@ export class UserService {
         id,
       },
     });
+
+    return messageGenerator('update')
+
   }
 
   async remove(id: string) {
+
+    const countUser = await this.prisma.user.count()    
+
+    if(countUser === 1) throw new BadRequestException("Você não pode deixar o sistema sem usuários")
+
     await this.exist(id);
 
-    return this.prisma.user.delete({
+    const user = await this.prisma.user.findUnique({
+      where:{
+        id
+      }
+    })
+
+    if(user.role === Role.Admin) throw new UnauthorizedException("Você não pode apagar uma conta admin")
+
+    await this.prisma.user.delete({
       where: {
         id,
       },
@@ -101,6 +121,8 @@ export class UserService {
         password: false,
       }
     });
+
+    return messageGenerator('delete')
   }
 
   async exist(id: string) {

@@ -7,7 +7,7 @@ import { UserModule } from 'src/user/user.module';
 
 @Module({
   imports:[PrismaModule, forwardRef(() => UserModule), JwtModule.register({
-    secret: 'çldfdkfldskflçkdslçfk'
+      secret: process.env.JWT_SECRET
   })],
   providers: [AuthService],
   controllers: [AuthController],

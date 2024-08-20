@@ -26,8 +26,9 @@ model Customer {
   customerId    String    @id() @default(uuid())
   name          String
   password      String
-  loyaltyPoints Int
+  loyaltyPoints Int?
   email         String    @unique
+  createdAt     DateTime  @default(now())
   Contact       Contact[]
 }
 
