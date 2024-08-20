@@ -9,20 +9,20 @@ interface IThenHandler {
 interface ICatchHandler {
     response?:{
         data: {
-            message: string
+            message: string | string[]
         }
-        status: number;
+        statusCode: number;
     },
 }
 
 
 export const catchHandler = (err: ICatchHandler) => {
-    toast.dismiss();
     if (err.response?.data) {
+      if(Array.isArray(err.response.data.message)) toast.error(err.response.data.message[0]);
       if (err.response.data.message) toast.error(err.response.data.message);
-      else toast.error(`Erro: ${err.response.status}`);
+      else toast.error(`Erro: ${err.response.statusCode}`);
   
-      if (err.response.status === 401 && window.location.pathname !== "/login")
+      if (err.response.statusCode === 401 && window.location.pathname !== "/login")
         window.location.pathname = "/login";
     } else {
       toast.error("Erro de comunicação");
@@ -30,7 +30,6 @@ export const catchHandler = (err: ICatchHandler) => {
   };
   
   export const thenHandler = (res: IThenHandler) => {
-    toast.dismiss();
     if (res.data) {
       toast.success(res.data.message);
     } else {
@@ -53,6 +52,14 @@ export const valueMask = (value: string) => {
     style: "currency",
     currency: "BRL",
   });
+}
+
+export const cpfMask = (value: string) => {
+  return value
+    .replace(/\D/g, '') // Remove qualquer caractere que não seja número
+    .replace(/(\d{3})(\d)/, '$1.$2') // Coloca o primeiro ponto
+    .replace(/(\d{3})(\d)/, '$1.$2') // Coloca o segundo ponto
+    .replace(/(\d{3})(\d{1,2})$/, '$1-$2'); // Coloca o traço
 }
 
 export const unmaskValue = (value: string): number => {

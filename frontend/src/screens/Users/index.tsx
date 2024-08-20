@@ -9,7 +9,6 @@ import {
 import { Pencil, PlusCircle } from "@phosphor-icons/react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { toast } from "react-toastify";
 import { IconButton } from "../../components/IconButton";
 import { PopoverDelete } from "../../components/Popover";
 import { InfoTable, InfoTableContent } from "../../components/Table";
@@ -18,8 +17,8 @@ import { AxiosClient } from "../../ServiceClients/AxiosClient";
 import { PermissionService } from "../../services/permission";
 import { UserService } from "../../services/user";
 import { DateFormater, intlNumberFormatter } from "../../utils/functions";
-import { ModalCreateUser } from "./utils/ModalCreateUser";
 import { IUser } from "../../utils/types";
+import { ModalCreateUser } from "./utils/ModalCreateUser";
 import { ModalUpdateUser } from "./utils/ModalUpdateUser";
 
 export const UserList = () => {
@@ -52,7 +51,6 @@ export const UserList = () => {
   const mutation = useMutation({
     mutationFn: (id: string) => userService.delete(id),
     onSuccess: () => {
-      toast.success("Apagado com sucesso!");
       refetch();
     },
   });
@@ -131,7 +129,6 @@ export const UserList = () => {
                           <Button
                             variant="none"
                             onClick={() => {
-                              console.log(user);
                               setSelectedUser(user);
                               updateOnOpen();
                             }}

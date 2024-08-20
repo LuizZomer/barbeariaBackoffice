@@ -1,7 +1,7 @@
 import { Divider, Image, Text } from "@chakra-ui/react";
 import compactLogo from "/compactLogo.png";
 import * as S from "./styles";
-import { House, User } from "@phosphor-icons/react";
+import { House, User, Users } from "@phosphor-icons/react";
 import { Outlet, useNavigate } from "react-router-dom";
 
 interface ISidebarOption {
@@ -17,6 +17,11 @@ export const Sidebar = () => {
   const sidebarOptions: ISidebarOption[] = [
     { icon: <House size={28} color="white" />, title: "Home", url: "/home" },
     { icon: <User size={28} color="white" />, title: "Usuários", url: "/user" },
+    {
+      icon: <Users size={28} color="white" />,
+      title: "Clientes",
+      url: "/customer",
+    },
   ];
 
   return (

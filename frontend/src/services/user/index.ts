@@ -36,9 +36,9 @@ export class UserService {
     }
   }
 
-  async update(user: IUserPost): Promise<TUserPost | void>{
+  async update({user, id}: {user: IUserPost, id: string}): Promise<TUserPost | void>{
     try{
-      const res = await this.httpClient.update<TUserPost>('/users', user)
+      const res = await this.httpClient.update<TUserPost>(`/users/${id}`, user)
       return res.data
     }catch(err){
       console.log(err);

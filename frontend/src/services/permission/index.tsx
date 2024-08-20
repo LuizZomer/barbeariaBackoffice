@@ -18,8 +18,7 @@ export class PermissionService {
         "/permission/select"
       );
       return res.data;
-    } catch (err) {
-      console.log(err);
+    } catch {
       return [];
     }
   }

@@ -15,7 +15,6 @@ createRoot(document.getElementById("root")!).render(
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <AppRouter />
           <ToastContainer
             position="bottom-left"
             autoClose={2500}
@@ -27,6 +26,7 @@ createRoot(document.getElementById("root")!).render(
             draggable
             pauseOnHover
           />
+          <AppRouter />
           <GlobalStyle />
         </AuthProvider>
       </QueryClientProvider>

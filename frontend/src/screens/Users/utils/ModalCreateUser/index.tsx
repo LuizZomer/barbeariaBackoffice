@@ -19,7 +19,6 @@ import { PermissionService } from "../../../../services/permission";
 import { unmaskValue, valueMask } from "../../../../utils/functions";
 import { UserService } from "../../../../services/user";
 import { TUserPost } from "../../../../utils/types";
-import { toast } from "react-toastify";
 
 interface IModalProps {
   onClose: () => void;
@@ -31,6 +30,11 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
   const permissionService = new PermissionService(AxiosClient);
   const userService = new UserService(AxiosClient);
 
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
+
   const { data: permissionList } = useQuery({
     queryKey: ["permission"],
     queryFn: () => permissionService.getPermissionSelect(),
@@ -39,9 +43,8 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
   const mutation = useMutation({
     mutationFn: userService.post.bind(userService),
     onSuccess: () => {
-      toast.success("Criado com sucesso!");
+      handleClose();
       onSave();
-      onClose();
     },
   });
 
@@ -87,18 +90,11 @@ export const ModalCreateUser = ({ isOpen, onClose, onSave }: IModalProps) => {
     },
   });
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
-
   const handleCreate = (data: TFormData) => {
     const user: TUserPost = {
       ...data,
       wage: unmaskValue(data.wage),
     };
-
-    console.log(user);
 
     mutation.mutate(user);
   };

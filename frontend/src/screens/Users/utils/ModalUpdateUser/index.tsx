@@ -16,10 +16,9 @@ import { FormInput } from "../../../../components/Form/Input";
 import { FormSelect } from "../../../../components/Form/Select";
 import { AxiosClient } from "../../../../ServiceClients/AxiosClient";
 import { PermissionService } from "../../../../services/permission";
-import { unmaskValue, valueMask } from "../../../../utils/functions";
 import { UserService } from "../../../../services/user";
+import { unmaskValue, valueMask } from "../../../../utils/functions";
 import { IUser, TUserPost } from "../../../../utils/types";
-import { toast } from "react-toastify";
 
 interface IModalProps {
   onClose: () => void;
@@ -37,6 +36,11 @@ export const ModalUpdateUser = ({
   const permissionService = new PermissionService(AxiosClient);
   const userService = new UserService(AxiosClient);
 
+  const handleClose = () => {
+    reset();
+    onClose();
+  };
+
   const { data: permissionList } = useQuery({
     queryKey: ["permission"],
     queryFn: () => permissionService.getPermissionSelect(),
@@ -45,13 +49,13 @@ export const ModalUpdateUser = ({
   const mutation = useMutation({
     mutationFn: userService.update.bind(userService),
     onSuccess: () => {
-      toast.success("Criado com sucesso!");
       onSave();
-      onClose();
+      handleClose();
     },
   });
 
   const schema = z.object({
+    id: z.string(),
     name: z.string().min(3, "No minimo 3 caracteres"),
     email: z.string().email("Precisa ser um email").min(1, "Campo obrigatório"),
     workload: z.string().min(1, "Campo obrigatório"),
@@ -70,26 +74,22 @@ export const ModalUpdateUser = ({
   } = useForm<TFormData>({
     resolver: zodResolver(schema),
     defaultValues: {
+      id: user.id,
       email: user.email,
       name: user.name,
       role: user.role,
-      wage: valueMask(String(user.wage)),
+      wage: valueMask(String(user.wage * 100)),
       workload: user.workload,
     },
   });
 
-  const handleClose = () => {
-    reset();
-    onClose();
-  };
-
   const handleUpdate = (data: TFormData) => {
-    const user: TUserPost = {
+    const userUpdated: TUserPost = {
       ...data,
       wage: unmaskValue(data.wage),
     };
 
-    mutation.mutate(user);
+    mutation.mutate({ id: user.id, user: userUpdated });
   };
 
   return (

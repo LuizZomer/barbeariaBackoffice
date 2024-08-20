@@ -15,14 +15,13 @@ api.interceptors.request.use((config) => {
 })
 
 api.interceptors.response.use(
-    (response) => {
+    (response) => {        
         thenHandler(response);
         return response
     },
     (error) => {
         catchHandler(error);
-        console.log(error);
         
-        return 
+        return Promise.reject(error)
     }
 )
