@@ -24,8 +24,11 @@ export class CustomerService {
         return messageGenerator('create')
     }
 
-    async findMany(){
-        return this.prisma.customer.findMany({
+    async findMany(take: number, page: number){
+
+        const customerTableCount = await this.prisma.customer.count()
+
+        const customers = this.prisma.customer.findMany({
             select:{
                 customerId: true,
                 email: true,
@@ -33,8 +36,12 @@ export class CustomerService {
                 name: true,
                 password: false,
                 createdAt: true,
-            }
+            },
+            skip: page * take,
+            take
         })
+
+        return {customers, customerCount: Math.ceil(customerTableCount / take)}
     }
 
     async findOne(id: string){

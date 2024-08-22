@@ -6,6 +6,12 @@ import * as bcript from 'bcrypt';
 import { Role } from 'src/enums/role.enum';
 import { messageGenerator } from 'src/utils/functions';
 
+interface IListAllParam {
+  page: number;
+  take: number;
+  role?: string
+}
+
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
@@ -40,8 +46,10 @@ export class UserService {
     return messageGenerator('create')
   }
 
-  async findAll(role?: string) {    
-    return this.prisma.user.findMany({
+  async findAll({page, take, role}:IListAllParam) {    
+    const userTableCount = await this.prisma.user.count()
+
+    const users = await this.prisma.user.findMany({
       select: {
         wage: true,
         email: true,
@@ -51,10 +59,15 @@ export class UserService {
         workload: true,
         createdAt: true,
         password: false,
-      },where:{
+      },
+      skip: page * take,
+      take: take,
+      where:{
         role: role || undefined
       }
     });    
+
+    return {users, userCount: Math.ceil(userTableCount / take)}
   }
 
   async findOne(id: string) {

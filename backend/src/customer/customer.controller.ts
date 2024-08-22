@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, ParseIntPipe, Patch, Post } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CreateCustomerDTO } from './dto/create-customer.dto';
 import { UpdateCustomerDTO } from './dto/update-customer.dto';
@@ -13,8 +13,11 @@ export class CustomerController {
     }
 
     @Get()
-    async findMany(){
-        return this.customerService.findMany()
+    async findMany(
+        @Param('take', ParseIntPipe) take: number,
+        @Param('page', ParseIntPipe) page: number,
+    ){
+        return this.customerService.findMany(take, page)
     }
 
     @Get(':id')
